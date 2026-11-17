@@ -1,0 +1,291 @@
+/* =====================================================================
+   BASE: colours, fonts, the header with the menu, and shared pieces.
+   Every page loads this file first. Change something here and it changes
+   on every page.
+
+   CHANGE THE LOOK: edit the colours and fonts in :root just below.
+   ADD A SHARED PIECE (used on 2+ pages): put it under Shared building blocks.
+   Styles for one page only belong in that page's own CSS file.
+   ===================================================================== */
+
+:root {
+  /* colours: change a value here to change it everywhere */
+  --paper:   #EEE5D1;
+  --paper-2: #E3D8BF;
+  --ink:     #1C1A17;
+  --ink-soft:#4B463F;
+  --red:     #D2352A;
+  --yellow:  #F1C232;
+  --night:   #1E2024;
+  --cream:   #F4EEE2;
+
+  /* fonts: if you change one, also update the Google Fonts link in every HTML file */
+  --font-title: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --font-race:  "Barlow", "Arial Narrow", Arial, sans-serif;
+  --font-body:  "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:  "Space Mono", "Courier New", monospace;
+
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--paper); }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+img { max-width: 100%; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* The page column */
+.page {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 14px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left));
+}
+
+/* ---------- Header: title on the left, MENU always top right ---------- */
+
+.site-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+.site-title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: .9;
+}
+.site-title a { color: inherit; text-decoration: none; }
+.site-title span { display: block; }
+.site-header .site-title { font-size: 30px; }
+
+/* Home page: big title. MENU sits right of FORMULA, as tall as the word. */
+.site-header--big {
+  --size: min(17.4vw, 94px);
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  row-gap: 0;
+}
+/* display: contents lets the two title lines and the MENU button sit directly in the header grid:
+   row 1 = FORMULA + MENU, row 2 = MAKERSPACE across both columns. */
+.site-header--big .site-title { display: contents; }
+.site-header--big .title-line-1 { grid-column: 1; grid-row: 1; font-size: var(--size); }
+.site-header--big .title-line-2 { grid-column: 1 / -1; grid-row: 2; font-size: var(--size); }
+.site-header--big .menu-button {
+  grid-column: 2; grid-row: 1;
+  justify-self: end;
+  width: min(100%, 120px);
+  height: calc(var(--size) * .74);
+  grid-template-rows: 1fr auto;
+}
+.site-header--big /* Checker pattern: a conic gradient fills each 20px tile with two black and two yellow quarters. */
+.menu-button .checks { height: auto; }
+
+.menu-button {
+  display: grid;
+  width: 76px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 3px 0 var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+  text-align: center;
+}
+.menu-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.menu-button .checks {
+  display: block;
+  height: 30px;
+  border-bottom: 3px solid var(--ink);
+  background: repeating-conic-gradient(var(--ink) 0 25%, var(--yellow) 0 50%) 0 0 / 20px 20px;
+}
+.menu-button .word {
+  display: block;
+  padding: 5px 0 6px;
+  font-family: var(--font-race);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Red checker strip under the header and at the bottom of the home page */
+.checker {
+  height: 24px;
+  margin: 12px 0 18px;
+  background: repeating-conic-gradient(var(--red) 0 25%, transparent 0 50%) 0 0 / 24px 24px;
+}
+
+/* ---------- Menu panel ---------- */
+
+/* Full-screen dark backdrop; the white menu box (nav) is pushed to the top right. */
+.menu-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 12px;
+  background: rgba(28, 26, 23, .55);
+}
+.menu-panel nav {
+  width: min(100%, 340px);
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+.menu-panel ul { list-style: none; margin: 0; padding: 0 12px 12px; }
+.menu-panel a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px;
+  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--font-title);
+  font-size: 28px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.menu-panel a small { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; }
+.menu-panel a:hover, .menu-panel a[aria-current="page"] { background: var(--yellow); }
+
+/* ---------- Shared building blocks ---------- */
+
+.page-title {
+  margin: 4px 0 6px;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: clamp(52px, 16vw, 84px);
+  line-height: .9;
+  text-transform: uppercase;
+}
+.intro { margin: 0 0 18px; color: var(--ink-soft); max-width: 60ch; }
+
+/* Black title bar on top of a box */
+.box { border: 3px solid var(--ink); margin-bottom: 16px; }
+.box-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 4px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.box-bar h2 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.box-body { padding: 12px; display: grid; gap: 10px; }
+
+.button {
+  border: 3px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 14px 4px;
+  font-family: var(--font-title);
+  font-size: 19px;
+  line-height: 1.1;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.button--red { background: var(--red); border-color: var(--red); }
+.button--ghost { background: transparent; color: var(--ink); }
+.button:disabled { opacity: .4; cursor: not-allowed; }
+
+.chip {
+  border: 2px solid var(--ink);
+  background: transparent;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Form fields: <label class="field">Label <input></label> */
+.field {
+  display: grid;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.field input, .field select {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: #FFFAF0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.message {
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border: 2px solid var(--ink);
+  background: var(--yellow);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+.message.is-error { background: var(--red); border-color: var(--red); color: #fff; }
+
+.empty-note {
+  padding: 18px;
+  border: 3px dashed var(--ink-soft);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Vehicle pictures: a photo, or an empty box labelled "image" until one is added */
+.picture { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.picture--missing {
+  display: grid;
+  place-items: center;
+  border: 2px dashed currentColor;
+  opacity: .55;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: .08em;
+}
+
+.screen-reader-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 420px) {
+  .two-columns { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

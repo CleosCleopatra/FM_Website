@@ -1,0 +1,28 @@
+/* =====================================================================
+   TEMPLATE PAGE STYLES: copy this file for a new page (see template.html).
+   Used only by that one page. Colours, fonts, header, menu, buttons and
+   form fields already come from base.css, so start with an empty file and
+   only add what is special about your page.
+
+   Use the shared colour and font variables instead of typing values:
+     colours: var(--paper) var(--ink) var(--ink-soft) var(--red) var(--yellow) var(--night)
+     fonts:   var(--font-title) var(--font-race) var(--font-body) var(--font-mono)
+
+   Ready-made classes from base.css you can use in the HTML:
+     .box + .box-bar + .box-body   a box with a black title bar
+     .button  .button--red  .button--ghost
+     .chip                         small toggle button (aria-pressed="true" = selected)
+     .field                        a label with an input or select inside
+     .two-columns                  two form fields side by side (one column on phones)
+     .empty-note                   dashed "nothing here yet" box
+   ===================================================================== */
+
+/* ADD NEW STYLES FOR THIS PAGE BELOW. Example:
+
+.schedule-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 2px solid var(--paper-2);
+}
+*/

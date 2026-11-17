@@ -1,0 +1,67 @@
+/* =====================================================================
+   VOTE PAGE: one box per category with a top-3 and a list to pick from.
+   Used only by vote.html. Colours, fonts, header, menu, buttons and form
+   fields live in base.css; use those variables, e.g. color: var(--red).
+   ===================================================================== */
+
+.standing {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+.standing-bar { position: relative; height: 24px; background: var(--paper-2); }
+.standing-fill { position: absolute; inset: 0 auto 0 0; background: var(--ink); }
+.standing-name {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: calc(100% - 8px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--paper);
+  /* difference blending keeps the name readable both on the black bar and the beige background */
+  mix-blend-mode: difference;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.standing-count { text-align: right; font-weight: 700; }
+
+.your-vote { margin: 4px 0 0; font-size: 14px; }
+.your-vote b { position: relative; padding: 0 4px; }
+.your-vote b::after {
+  content: "";
+  position: absolute;
+  inset: -6px -8px;
+  border: 2.5px solid var(--red);
+  border-radius: 50%;
+  transform: rotate(-4deg);
+}
+
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.choice {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.choice:hover { background: var(--yellow); }
+
+@media (max-width: 420px) {
+  .choices { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------
+   ADD NEW STYLES FOR THIS PAGE BELOW.
+   Give new elements a class in vote.html and style that class here.
+   --------------------------------------------------------------------- */

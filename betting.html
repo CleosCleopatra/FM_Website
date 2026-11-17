@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<!--
+  =====================================================================
+  PAGE: BETTING PAGE. Offer bets and take other people's bets (stored in the Supabase bets table).
+       To add a bet type, edit BET_TYPES in js/config.js.
+
+  Files for this page:
+    HTML  betting.html
+    CSS   css/base.css (shared by all pages) + css/betting.css (this page only)
+    JS    js/betting.js (this page only), plus the shared js files at the bottom
+  =====================================================================
+-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Betting · Formula Makerspace</title>
+  <!-- Fonts: change them in css/base.css (--font-...) if you swap these. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=Barlow:ital,wght@0,600;1,700;1,800;1,900&family=Space+Mono:wght@400;700&display=swap">
+  <!-- Shared look first, then this page's own styles. ADD: extra page styles go in css/betting.css -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/betting.css">
+</head>
+<body>
+  <div class="page">
+
+    <!-- HEADER: the same on every page. MENU stays top right.
+         Keep the ids menuButton / menuPanel / menuClose: js/common.js uses them. -->
+
+    <header class="site-header">
+      <p class="site-title"><a href="index.html"><span>Formula</span><span>Makerspace</span></a></p>
+      <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="menuPanel"><span class="checks"></span><span class="word">MENU</span></button>
+    </header>
+    <div class="checker" aria-hidden="true"></div>
+
+    <!-- ===== PAGE CONTENT =====
+         ADD: new sections for this page go between here and the END PAGE CONTENT comment.
+         Elements with an id (like id="message") are filled in by the page's JS file. -->
+
+    <h2 class="page-title">Betting</h2>
+    <ul class="rules">
+      <li><b>No money</b>Bet a screwdriver, half a burger, your dignity.</li>
+      <li><b>Needs a taker</b>A bet only counts once someone takes it.</li>
+      <li><b>Pay up</b>The loser hands over the goods after the race.</li>
+    </ul>
+    <p class="message" id="message" role="status" hidden></p>
+
+    <form class="box" id="betForm" novalidate>
+      <div class="box-bar"><h2>Offer a bet</h2></div>
+      <div class="box-body">
+        <label class="field" for="yourName">Your name<input id="yourName" maxlength="40" autocomplete="nickname" placeholder="Alex"></label>
+
+        <div class="bet-on" role="group" aria-label="Bet on">
+          <button type="button" class="chip" data-bet-on="vehicle" aria-pressed="true">A vehicle</button>
+          <button type="button" class="chip" data-bet-on="makerspace" aria-pressed="false">A whole makerspace</button>
+        </div>
+
+        <div class="two-columns">
+          <label class="field" for="betSubject"><span id="betSubjectLabel">Vehicle</span><select id="betSubject"></select></label>
+          <label class="field" for="betType">…that it<select id="betType"></select></label>
+        </div>
+        <p class="bet-preview" id="betPreview"></p>
+
+        <label class="field" for="yourStake">You put up<input id="yourStake" maxlength="60" placeholder="Half a burger"></label>
+        <div><button class="button button--red" type="submit">Put it on the board</button></div>
+      </div>
+    </form>
+
+    <div class="tabs" role="group" aria-label="Show bets">
+      <button class="chip" data-list="open" aria-pressed="true">Waiting for a taker <span id="countOpen"></span></button>
+      <button class="chip" data-list="taken" aria-pressed="false">Bets on <span id="countTaken"></span></button>
+    </div>
+    <div id="bets"></div>
+    <!-- ===== END PAGE CONTENT ===== -->
+  </div>
+
+  <!-- MENU PANEL (opens from the MENU button).
+       ADD A NEW PAGE: add a <li> line here, and the same line in the menu of every other page.
+       aria-current="page" marks the page you are on. -->
+  <div class="menu-panel" id="menuPanel" hidden>
+    <nav aria-label="Menu">
+      <div class="box-bar"><h2>Menu</h2><button class="button" id="menuClose" aria-label="Close menu">✕</button></div>
+      <ul>
+        <li><a href="index.html">Home<small>Next race</small></a></li>
+        <li><a href="grid.html">The Grid<small>All vehicles</small></a></li>
+        <li><a href="bracket.html">Bracket<small>Tournament</small></a></li>
+        <li><a href="vote.html">Vote<small>Crowd awards</small></a></li>
+        <li><a href="betting.html" aria-current="page">Betting<small>No money</small></a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- SCRIPTS: keep this order. Supabase library, then config (your keys), db (all reads/writes),
+       common (shared helpers), and last this page's own file. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/betting.js"></script>
+</body>
+</html>

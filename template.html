@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<!--
+  =====================================================================
+  TEMPLATE: copy this to make a new page. It is not linked from anywhere.
+
+  HOW TO ADD A PAGE (example: a "Schedule" page)
+    1. Copy template.html    → schedule.html
+    2. Copy css/template.css → css/schedule.css
+    3. Copy js/template.js   → js/schedule.js
+    4. In schedule.html, change every "template" below to "schedule",
+       and change the title, heading and intro text.
+    5. Add the page to the menu: add the same <li> line to the menu panel
+       in EVERY page (index, grid, bracket, vote, betting and this one).
+    6. Optional: add a tile for it on the home page (see the TILES comment in index.html).
+  =====================================================================
+-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- CHANGE: the page name shown in the browser tab -->
+  <title>New Page · Formula Makerspace</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=Barlow:ital,wght@0,600;1,700;1,800;1,900&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <!-- CHANGE: template.css → your page's CSS file -->
+  <link rel="stylesheet" href="css/template.css">
+</head>
+<body>
+  <div class="page">
+
+    <!-- HEADER: leave as it is. MENU stays top right. -->
+    <header class="site-header">
+      <p class="site-title"><a href="index.html"><span>Formula</span><span>Makerspace</span></a></p>
+      <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="menuPanel"><span class="checks"></span><span class="word">MENU</span></button>
+    </header>
+    <div class="checker" aria-hidden="true"></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+
+    <!-- CHANGE: the big heading and the short text under it -->
+    <h2 class="page-title">New Page</h2>
+    <p class="intro">One sentence about what people do on this page.</p>
+
+    <!-- Error and success messages appear here (showMessage() in js/common.js). Keep it. -->
+    <p class="message" id="message" role="status" hidden></p>
+
+    <!-- ADD: your content. A box with a black title bar looks like this: -->
+    <section class="box">
+      <div class="box-bar"><h2>Box title</h2></div>
+      <div class="box-body" id="content">
+        <!-- js/template.js fills this in. You can also write plain HTML here. -->
+      </div>
+    </section>
+
+    <!-- ===== END PAGE CONTENT ===== -->
+  </div>
+
+  <!-- MENU PANEL: copy the same list as on the other pages,
+       and put aria-current="page" on this page's own line. -->
+  <div class="menu-panel" id="menuPanel" hidden>
+    <nav aria-label="Menu">
+      <div class="box-bar"><h2>Menu</h2><button class="button" id="menuClose" aria-label="Close menu">✕</button></div>
+      <ul>
+        <li><a href="index.html">Home<small>Next race</small></a></li>
+        <li><a href="grid.html">The Grid<small>All vehicles</small></a></li>
+        <li><a href="bracket.html">Bracket<small>Tournament</small></a></li>
+        <li><a href="vote.html">Vote<small>Crowd awards</small></a></li>
+        <li><a href="betting.html">Betting<small>No money</small></a></li>
+        <!-- ADD: <li><a href="template.html" aria-current="page">New Page<small>Short hint</small></a></li> -->
+      </ul>
+    </nav>
+  </div>
+
+  <!-- SCRIPTS: keep this order. Only the last line changes per page. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/common.js"></script>
+  <!-- CHANGE: template.js → your page's JS file -->
+  <script src="js/template.js"></script>
+</body>
+</html>

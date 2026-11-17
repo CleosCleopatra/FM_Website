@@ -1,0 +1,75 @@
+/* =====================================================================
+   BETTING PAGE: rules, the offer form and the list of bets.
+   Used only by betting.html. Colours, fonts, header, menu, buttons and form
+   fields live in base.css; use those variables, e.g. color: var(--red).
+   ===================================================================== */
+
+.rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 16px; padding: 0; list-style: none; }
+.rules li { padding: 8px; border: 3px solid var(--ink); font-size: 13px; line-height: 1.3; }
+.rules b { display: block; font-family: var(--font-title); font-weight: 400; font-size: 20px; text-transform: uppercase; }
+
+.bet-on { display: flex; gap: 8px; flex-wrap: wrap; }
+.bet-preview {
+  margin: 0;
+  font-family: var(--font-race);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* One bet */
+.bet { margin-bottom: 12px; border: 3px solid var(--ink); }
+.bet-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.bet-status { padding: 2px 8px; border: 2px solid var(--ink); }
+.bet-status.is-on { background: var(--red); border-color: var(--red); color: #fff; }
+.bet-claim {
+  margin: 0;
+  padding: 10px 10px 4px;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.05;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.stakes { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; padding: 6px 10px 12px; }
+.stake { min-width: 0; padding: 6px 8px; border: 2px dashed var(--ink); font-size: 14px; overflow-wrap: anywhere; }
+.stake small {
+  display: block;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.stake.is-open { color: var(--ink-soft); font-style: italic; }
+.stakes .vs { font-family: var(--font-title); font-size: 20px; }
+
+.take-form { display: grid; gap: 8px; padding: 0 10px 12px; }
+.take-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.bet-actions { padding: 0 10px 12px; }
+
+@media (max-width: 420px) {
+  .rules { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------
+   ADD NEW STYLES FOR THIS PAGE BELOW.
+   Give new elements a class in betting.html and style that class here.
+   --------------------------------------------------------------------- */

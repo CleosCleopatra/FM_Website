@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<!--
+  =====================================================================
+  PAGE: ADMIN PAGE (/admin). Decide races, mark breakdowns, set the current race, fastest lap and event details.
+       Not linked from the menu on purpose. Anyone with the address can open it.
+
+  Files for this page:
+    HTML  admin/index.html
+    CSS   ../css/base.css (shared by all pages) + ../css/admin.css (this page only)
+    JS    ../js/admin.js (this page only), plus the shared js files at the bottom
+  =====================================================================
+-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Admin · Formula Makerspace</title>
+  <!-- Fonts: change them in ../css/base.css (--font-...) if you swap these. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;800&family=Barlow:ital,wght@0,600;1,700;1,800;1,900&family=Space+Mono:wght@400;700&display=swap">
+  <!-- Shared look first, then this page's own styles. ADD: extra page styles go in css/admin.css -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="page">
+
+    <!-- HEADER: the admin page has a SITE button (top right) instead of MENU, linking back to the site. -->
+    <header class="site-header">
+      <p class="site-title"><a href="../index.html"><span>Race</span><span>Admin</span></a></p>
+      <a class="menu-button" href="../index.html"><span class="checks"></span><span class="word">SITE</span></a>
+    </header>
+    <div class="checker" aria-hidden="true"></div>
+
+    <!-- ===== PAGE CONTENT =====
+         ADD: new sections for this page go between here and the END PAGE CONTENT comment.
+         Elements with an id (like id="message") are filled in by the page's JS file. -->
+
+    <p class="intro">Record race winners, breakdowns and the fastest lap. Everything you save shows up on the site within a few seconds.</p>
+    <p class="message" id="message" role="status" hidden></p>
+
+    <!-- 1. Matches where both cars are known but nobody has won yet -->
+    <section class="box">
+      <div class="box-bar"><h2>Races to decide</h2></div>
+      <div class="box-body" id="openMatches"></div>
+    </section>
+
+    <!-- 2. Which race is shown on the home page, and when it starts -->
+    <form class="box" id="currentRaceForm" novalidate>
+      <div class="box-bar"><h2>Current race</h2></div>
+      <div class="box-body">
+        <label class="field" for="currentMatch">Race shown on the home page<select id="currentMatch"></select></label>
+        <label class="field" for="startsAt">Lights out at<input id="startsAt" type="datetime-local"></label>
+        <div><button class="button button--red" type="submit">Save current race</button></div>
+      </div>
+    </form>
+
+    <!-- 3. Breakdowns (vehicles.broken) -->
+    <section class="box">
+      <div class="box-bar"><h2>Breakdowns</h2></div>
+      <div class="box-body">
+        <p class="small-print">Tap a car when it breaks down. Tap it again if it's running again.</p>
+        <div class="toggle-list" id="breakdowns"></div>
+      </div>
+    </section>
+
+    <!-- 4. Fastest lap (settings.best_lap_vehicle_id, settings.best_lap_time) -->
+    <form class="box" id="fastestLapForm" novalidate>
+      <div class="box-bar"><h2>Fastest lap</h2></div>
+      <div class="box-body">
+        <div class="two-columns">
+          <label class="field" for="lapVehicle">Set by<select id="lapVehicle"></select></label>
+          <label class="field" for="lapTime">Lap time<input id="lapTime" placeholder="1:12.487"></label>
+        </div>
+        <div><button class="button button--red" type="submit">Save fastest lap</button></div>
+      </div>
+    </form>
+
+    <!-- 5. Event details on the home page race card -->
+    <form class="box" id="eventForm" novalidate>
+      <div class="box-bar"><h2>Event details</h2></div>
+      <div class="box-body">
+        <label class="field" for="eventName">Event name<input id="eventName" maxlength="50" placeholder="event_name"></label>
+        <div class="two-columns">
+          <label class="field" for="eventPlace">Place<input id="eventPlace" maxlength="40" placeholder="event_place"></label>
+          <label class="field" for="eventLaps">Laps<input id="eventLaps" type="number" min="1" max="999" placeholder="laps"></label>
+        </div>
+        <div><button class="button button--red" type="submit">Save event details</button></div>
+      </div>
+    </form>
+
+    <!-- 6. Results already recorded, with undo -->
+    <section class="box">
+      <div class="box-bar"><h2>Results so far</h2></div>
+      <div class="box-body" id="results"></div>
+    </section>
+    <!-- ===== END PAGE CONTENT ===== -->
+  </div>
+
+  <!-- SCRIPTS: keep this order. Supabase library, then config (your keys), db (all reads/writes),
+       common (shared helpers), and last this page's own file. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/db.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

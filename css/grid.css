@@ -1,0 +1,60 @@
+/* =====================================================================
+   GRID PAGE: one card per vehicle.
+   Used only by grid.html. Colours, fonts, header, menu, buttons and form
+   fields live in base.css; use those variables, e.g. color: var(--red).
+   ===================================================================== */
+
+.cars { display: grid; gap: 16px; }
+
+.car { border: 3px solid var(--ink); }
+.car-picture { position: relative; border-bottom: 3px solid var(--ink); }
+.car-picture .picture { aspect-ratio: 16 / 8; }
+
+/* red stamp when vehicles.broken is true */
+.broken-stamp {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  transform: rotate(-8deg);
+  padding: 2px 10px;
+  border: 3px solid var(--red);
+  background: var(--paper);
+  color: var(--red);
+  font-family: var(--font-title);
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.car-info { padding: 12px 14px 14px; display: grid; gap: 10px; }
+.car-info h3 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: .95;
+  text-transform: uppercase;
+}
+.car-makerspace {
+  margin-top: 4px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.car-facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 14px; }
+.car-facts dt {
+  padding-top: 2px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.car-facts dd { margin: 0; min-width: 0; }
+.fun-fact { margin: 0; padding: 4px 0 4px 10px; border-left: 6px solid var(--yellow); font-weight: 600; }
+
+/* ---------------------------------------------------------------------
+   ADD NEW STYLES FOR THIS PAGE BELOW.
+   Give new elements a class in grid.html and style that class here.
+   --------------------------------------------------------------------- */

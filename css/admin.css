@@ -1,0 +1,47 @@
+/* =====================================================================
+   ADMIN PAGE
+   Used only by admin/index.html. Colours, fonts, header, menu, buttons and form
+   fields live in base.css; use those variables, e.g. color: var(--red).
+   ===================================================================== */
+
+.small-print { margin: 0; color: var(--ink-soft); font-family: var(--font-mono); font-size: 12px; }
+
+/* A race waiting for a result */
+.decide { display: grid; gap: 8px; padding: 10px; border: 2px solid var(--ink); }
+.decide p { margin: 0; font-size: 16px; }
+.round-name {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.decide-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.decide-buttons .button { font-size: 17px; }
+
+/* Breakdown toggles */
+.toggle-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.toggle {
+  min-width: 0;
+  padding: 8px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+}
+.toggle[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* Recorded results */
+.result { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 2px solid var(--paper-2); }
+.result span { min-width: 0; }
+
+@media (max-width: 420px) {
+  .toggle-list { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------
+   ADD NEW STYLES FOR THIS PAGE BELOW.
+   Give new elements a class in admin/index.html and style that class here.
+   --------------------------------------------------------------------- */

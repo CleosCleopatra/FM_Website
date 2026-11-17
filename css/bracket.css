@@ -1,0 +1,85 @@
+/* =====================================================================
+   BRACKET PAGE
+   Used only by bracket.html. Colours, fonts, header, menu, buttons and form
+   fields live in base.css; use those variables, e.g. color: var(--red).
+   The bracket is a 16-column grid. Each match box spans the columns of
+   the two matches it grew out of, so the tree lines up by itself.
+   The final is at the top, the first round (with pictures) at the bottom.
+   ===================================================================== */
+
+.bracket-scroll { overflow-x: auto; padding: 14px 10px 12px; border: 3px solid var(--ink); }
+.bracket { display: grid; grid-template-columns: repeat(16, minmax(64px, 1fr)); min-width: 1060px; }
+
+/* sticky + left: 0 keeps the round name visible while scrolling the bracket sideways */
+.round-label {
+  grid-column: 1 / -1;
+  position: sticky;
+  left: 0;
+  width: max-content;
+  margin: 6px 0;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.bracket-cell { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 0 3px; }
+
+/* One match: two rows, one per car */
+.match { width: min(100%, 170px); border: 2px solid var(--ink); background: var(--paper); }
+.match-car {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 3px 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+.match-car + .match-car { border-top: 1px solid var(--ink); }
+.match-car.is-empty { color: var(--ink-soft); font-weight: 400; }
+.match-car.is-winner { background: var(--yellow); }
+.match-car.is-loser { color: var(--ink-soft); text-decoration: line-through; }
+
+/* First round: two pictures side by side */
+.match--first { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+.match--first .match-car { flex-direction: column; padding: 0; gap: 0; text-align: center; }
+.match--first .match-car + .match-car { border-top: 0; border-left: 1px solid var(--ink); }
+.match--first .match-car span { padding: 4px 2px 5px; min-height: 3.6em; display: flex; align-items: center; }
+.match--first .picture { border-bottom: 1px solid var(--ink); }
+
+.champion {
+  width: min(100%, 300px);
+  min-height: 60px;
+  display: grid;
+  place-items: center;
+  border: 3px dashed var(--ink-soft);
+  font-family: var(--font-title);
+  font-size: 26px;
+  text-transform: uppercase;
+}
+.champion.has-winner { border-style: solid; border-color: var(--ink); background: var(--yellow); }
+
+/* Lines joining a match to the two matches below it */
+.join { position: relative; width: 100%; height: 22px; }
+/* The fork under each match: ::before is the short line down from the box,
+   ::after is the bracket shape reaching to the centres of the two matches below
+   (25% and 75% of the cell width). */
+.join::before { content: ""; position: absolute; left: 50%; top: 0; height: 11px; border-left: 2px solid var(--ink); }
+.join::after { content: ""; position: absolute; left: 25%; right: 25%; top: 11px; height: 11px; border: 2px solid var(--ink); border-bottom: 0; }
+
+.join--single { height: 14px; }
+.join--single::before { height: 14px; }
+.join--single::after { display: none; }
+
+.hint { margin: 10px 0 0; color: var(--ink-soft); font-family: var(--font-mono); font-size: 12px; }
+
+/* ---------------------------------------------------------------------
+   ADD NEW STYLES FOR THIS PAGE BELOW.
+   Give new elements a class in bracket.html and style that class here.
+   --------------------------------------------------------------------- */
