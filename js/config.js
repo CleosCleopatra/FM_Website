@@ -2,9 +2,7 @@
    SETTINGS YOU EDIT
    ===================================================================== */
 
-// Your Supabase project (Supabase dashboard → Project Settings → API).
-// The "anon public" key is meant to be visible in the browser.
-const SUPABASE_URL = "https://supabase.com/project/ehalmckvxzwrdwuctnuj";
+const SUPABASE_URL = "https://ehalmckvxzwrdwuctnuj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_9VlRqguVogk5nf6niUjjrw_hruC3-Nk";
 
 // How often each page fetches fresh data from Supabase, in milliseconds.

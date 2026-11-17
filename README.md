@@ -42,7 +42,9 @@ Every file has comments marked **ADD**, **CHANGE** or **Keep** that show where n
 
 1. **Supabase keys:** open `js/config.js` and paste your Project URL and anon public key
    (Supabase → Project Settings → API).
-2. **Missing columns:** run `supabase/add-missing-columns.sql` in Supabase → SQL Editor.
+2. **Tables:** to start from scratch, run `supabase/create-tables.sql` in Supabase → SQL Editor.
+   ⚠ It deletes and recreates all six tables. Then run `supabase/add-missing-columns.sql`
+   (it also sets the access rules).
    It adds `matches.starts_at` and the fastest-lap / event columns on `settings`,
    and the access rules for the anon key. Skip policies you already have.
 3. **Bet types:** if `bets.type` already uses other values than
