@@ -99,6 +99,55 @@ function matchForBet(vehicleId) {
   return open ? open.id : state.settings.current_match ?? null;
 }
 
+/* ---------- who won a bet ---------- */
+
+/**
+ * Work out a bet's result from data that's already there:
+ *   race_win       → the bet's match has a winner (matches.winner_id)
+ *   tournament_win → the final has a winner
+ *   breaks         → the car (or any car of the makerspace) is marked broken;
+ *                    if none broke by the end of the tournament, the taker wins
+ *   fastest_lap    → decided at the end of the tournament (settings.best_lap_vehicle_id),
+ *                    since the fastest lap can still be beaten until then
+ * Returns "creator", "taker", or null while it's still undecided.
+ */
+function betResult(bet) {
+  const vehicles = makeLookup(state.vehicles);
+  const over = Boolean(state.settings.tournament_over);
+
+  // Does a vehicle id match what the bet is about (one car, or a makerspace)?
+  const isSubject = (vehicleId) => {
+    if (vehicleId == null) return false;
+    if (bet.makerspace) {
+      const v = findIn(vehicles, vehicleId);
+      return Boolean(v && v.makerspace === bet.makerspace);
+    }
+    return String(vehicleId) === String(bet.vehicle_id);
+  };
+  const outcome = (creatorRight) => (creatorRight ? "creator" : "taker");
+
+  switch (bet.type) {
+    case "race_win": {
+      const match = state.matches.find((m) => String(m.id) === String(bet.match_id));
+      return match && match.winner_id != null ? outcome(isSubject(match.winner_id)) : null;
+    }
+    case "tournament_win": {
+      const final = state.matches.find((m) => m.next_match_id == null);
+      return final && final.winner_id != null ? outcome(isSubject(final.winner_id)) : null;
+    }
+    case "breaks": {
+      const broke = state.vehicles.some((v) => v.broken && isSubject(v.id));
+      if (broke) return "creator";
+      return over ? "taker" : null;
+    }
+    case "fastest_lap":
+      return over ? outcome(isSubject(state.settings.best_lap_vehicle_id)) : null;
+    default:
+      return null;
+  }
+}
+
+
 /** Submit handler for the offer form: check the input, then save the bet. */
 async function offerBet(event) {
   event.preventDefault(); // handle the form in JS instead of reloading the page
@@ -169,6 +218,30 @@ function showBets() {
  */
 function betCard(bet) {
   const isTaken = Boolean(bet.taker_name);
+  const result = betResult(bet);
+
+  // A taken bet with a result: show who won and what they collect.
+  if (isTaken && result) {
+    const winner = result === "creator" ? bet.creator_name : bet.taker_name;
+    const loser = result === "creator" ? bet.taker_name : bet.creator_name;
+    const prize = result === "creator" ? bet.taker_stake : bet.creator_stake;
+    return `
+    <article class="bet is-settled">
+      <div class="bet-top"><span>${escapeHtml(bet.creator_name)} bet</span><span class="bet-status is-won">${escapeHtml(winner)} won</span></div>
+      <p class="bet-claim">${escapeHtml(describeBet(bet))}</p>
+      <div class="bet-result">${result === "creator" ? "It happened!" : "It didn't happen."} <b>${escapeHtml(winner)}</b> collects <b>${escapeHtml(prize)}</b> from ${escapeHtml(loser)}.</div>
+    </article>`;
+  }
+
+  // An open bet whose outcome is already known can't be taken any more.
+  if (!isTaken && result) {
+    return `
+    <article class="bet is-settled">
+      <div class="bet-top"><span>${escapeHtml(bet.creator_name)} bets</span><span class="bet-status">Closed</span></div>
+      <p class="bet-claim">${escapeHtml(describeBet(bet))}</p>
+      <div class="bet-result">Nobody took this bet before the result was in.</div>
+    </article>`;
+  }
 
   const takerSide = isTaken
     ? `<div class="stake"><small>${escapeHtml(bet.taker_name)} puts up</small>${escapeHtml(bet.taker_stake)}</div>`

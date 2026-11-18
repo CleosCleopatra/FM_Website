@@ -38,6 +38,9 @@
 }
 .bet-status { padding: 2px 8px; border: 2px solid var(--ink); }
 .bet-status.is-on { background: var(--red); border-color: var(--red); color: #fff; }
+.bet-status.is-won { background: var(--ink); color: #fff; }
+.bet-result { padding: 4px 10px 12px; }
+.bet.is-settled .bet-claim { opacity: .75; }
 .bet-claim {
   margin: 0;
   padding: 10px 10px 4px;
