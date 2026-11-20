@@ -227,6 +227,16 @@ function showResults() {
 }
 
 
+/** Clear the fastest lap (vehicle and time), e.g. after a test run. Asks first. */
+function resetFastestLap() {
+  if (!confirm("Reset the fastest lap? The saved time and car will be removed.")) return;
+  $("#lapTime").value = "";
+  save(() => Data.updateSettings(admin.settings, {
+    best_lap_vehicle_id: null,
+    best_lap_time: null,
+  }), "Fastest lap reset.");
+}
+
 /* ---------- buttons and forms ---------- */
 
 // One click listener for every button on the page. Each button type is
@@ -255,6 +265,9 @@ document.addEventListener("click", (event) => {
     save(() => Data.updateVehicle(vehicle.id, { broken: !vehicle.broken }),
       vehicle.broken ? `${vehicle.name} is running again.` : `${vehicle.name} marked as broken down.`);
   }
+
+  // "Reset fastest lap": clear the saved lap time and car
+  if (button.hasAttribute("data-reset-lap")) resetFastestLap();
 
   // "Show on home page": pre-select this match in section 2 (still needs Save)
   if (button.dataset.makeCurrent) {

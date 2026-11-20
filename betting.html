@@ -59,6 +59,8 @@
           <label class="field" for="betSubject"><span id="betSubjectLabel">Vehicle</span><select id="betSubject"></select></label>
           <label class="field" for="betType">…that it<select id="betType"></select></label>
         </div>
+        <!-- Only shown for "Wins their race" bets: which race the bet is about. Filled by js/betting.js. -->
+        <label class="field" for="betRace" id="betRaceField" hidden>Which race<select id="betRace"></select></label>
         <p class="bet-preview" id="betPreview"></p>
 
         <label class="field" for="yourStake">You put up<input id="yourStake" maxlength="60" placeholder="Half a burger"></label>
