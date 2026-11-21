@@ -111,10 +111,26 @@ const Remember = {
 
 /**
  * Bets must be objects or favours, never money.
- * Matches amounts with a currency ("20 kr", "5$", "50:-"), currency symbols,
- * and words like cash / money / swish / pengar. Case-insensitive.
+ * Matches:
+ *   - an amount with a currency: "20 kr", "5$", "50:-", "100sek"
+ *   - currency symbols: $ € £
+ *   - money words in English and Swedish, as whole words: "20 crowns",
+ *     "a fiver"... see the list below. Add more words to the list if people
+ *     find new ones.
+ * Case-insensitive. Whole words only, so "skrue" or "cashew nuts" still pass.
+ * (\p{L} = any letter, including å ä ö, which plain \b doesn't understand.)
  */
-const MONEY_WORDS = /(\d\s*(kr|sek|:-|\$|€|£))|\b(kr|kronor|sek|money|cash|pengar|swish|dollars?|euros?)\b|[$€£]/i;
+const MONEY_WORD_LIST = [
+  "kr", "kronor", "krona", "kroner", "sek", "crowns?", "öre", "riksdaler",
+  "spänn", "stålar", "pengar", "cash", "money", "swish", "swisha", "swishar",
+  "dollars?", "bucks?", "euros?", "cents?", "quid", "fivers?", "tenners?",
+  "usd", "eur", "gbp", "nok", "dkk", "paypal", "venmo", "mobilepay",
+  "hundralapp", "tjuga", "femtiolapp", "femhundring", "tusenlapp",
+];
+const MONEY_WORDS = new RegExp(
+  String.raw`\d\s*(kr|sek|:-|\$|€|£)|[$€£]|(^|[^\p{L}])(${MONEY_WORD_LIST.join("|")})(?=$|[^\p{L}])`,
+  "iu"
+);
 
 /**
  * Name a round from how many matches it contains, so the code doesn't

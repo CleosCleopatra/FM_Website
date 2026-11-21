@@ -6,6 +6,9 @@
    renamed in Supabase, this is the only file to update.
 
    Tables used: vehicles, categories, matches, votes, bets, settings.
+   Who may write what is decided in Supabase itself (see supabase/security.sql):
+   visitors can vote, offer bets and take open bets; everything on the admin
+   page needs a logged-in admin.
    ===================================================================== */
 
 // One Supabase client for the whole page. `supabase` is the global created by
@@ -35,6 +38,18 @@ async function write(promise) {
   const { data, error } = await promise;
   if (error) throw error;
   return data;
+}
+
+/**
+ * Like write(), for admin updates: asks Supabase to return the changed rows
+ * and throws if none changed. Supabase doesn't report an error when the
+ * database rules block an update; it just changes nothing. Without this
+ * check the admin page would say "Saved" when nothing was saved.
+ */
+async function writeChecked(query) {
+  const rows = await write(query.select());
+  if (!rows.length) throw new Error("Nothing was saved. Are you still logged in? Try logging in again.");
+  return rows;
 }
 
 /** Which column of the next match a winner goes into, from matches.next_slot ('a' or 'b'). */
@@ -92,17 +107,35 @@ const Data = {
   },
 
 
+  /* ----- admin login (Supabase Auth) ----- */
+
+  /** The logged-in admin's session, or null when nobody is logged in on this browser. */
+  async session() {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
+    return data.session;
+  },
+
+  /** Log in with an admin user made in Supabase → Authentication → Users. */
+  async signIn(email, password) {
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  },
+
+  signOut: () => supabaseClient.auth.signOut(),
+
+
   /* ----- admin page ----- */
 
   updateMatch: (id, changes) =>
-    write(supabaseClient.from("matches").update(changes).eq("id", id)),
+    writeChecked(supabaseClient.from("matches").update(changes).eq("id", id)),
 
   updateVehicle: (id, changes) =>
-    write(supabaseClient.from("vehicles").update(changes).eq("id", id)),
+    writeChecked(supabaseClient.from("vehicles").update(changes).eq("id", id)),
 
   /** `settingsRow` is the row returned by Data.settings(); we update it by its id. */
   updateSettings: (settingsRow, changes) =>
-    write(supabaseClient.from("settings").update(changes).eq("id", settingsRow.id)),
+    writeChecked(supabaseClient.from("settings").update(changes).eq("id", settingsRow.id)),
 
   /**
    * Record a race result:

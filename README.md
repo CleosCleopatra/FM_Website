@@ -19,7 +19,8 @@ Plain HTML, CSS and JavaScript. No build step. Data lives in Supabase.
 | `js/common.js` | Shared helpers: menu, pictures, messages, auto-refresh |
 | `js/<page>.js` | Code for one page only |
 | `images/` | Icons and the race-track background |
-| `supabase/add-missing-columns.sql` | Columns and access rules the site needs |
+| `supabase/add-missing-columns.sql` | Columns the site needs (and the old, open access rules) |
+| `supabase/security.sql` | Access rules: visitors can vote and bet, only a logged-in admin can change results |
 | `template.html`, `css/template.css`, `js/template.js` | Copy these to make a new page |
 
 ## Where to add things
@@ -45,6 +46,8 @@ Every file has comments marked **ADD**, **CHANGE** or **Keep** that show where n
 2. **Tables:** to start from scratch, run `supabase/create-tables.sql` in Supabase → SQL Editor.
    ⚠ It deletes and recreates all six tables. Then run `supabase/add-missing-columns.sql`
    (it also sets the access rules).
+   Then run `supabase/security.sql`, which replaces those access rules with safer ones
+   (see step 5).
    It adds `matches.starts_at` and the fastest-lap / event columns on `settings`,
    and the access rules for the anon key. Skip policies you already have.
 3. **Bet types:** if `bets.type` already uses other values than
@@ -54,6 +57,10 @@ Every file has comments marked **ADD**, **CHANGE** or **Keep** that show where n
    categories, an empty 16-car bracket and a settings row.
    The bracket expects round 1 to have 8 matches, with `next_match_id` and
    `next_slot` (`a` or `b`) pointing to where the winner goes. The seed sets this up.
+5. **Admin login:** in Supabase → Authentication → Sign In / Providers, turn OFF
+   "Allow new users to sign up". Then Authentication → Users → Add user: one user per
+   admin (email + password, tick "Auto Confirm User"). Do this before running
+   `supabase/security.sql`, or nobody can save anything on the admin page.
 
 ## Replacing placeholders
 
@@ -92,5 +99,6 @@ npx serve .
 - Pages fetch new data every 10 seconds (`REFRESH_MS` in `js/config.js`).
 - Votes have no login: each browser remembers which categories it voted in,
   but someone could vote again from another browser.
-- `/admin` has no password, as requested. Anyone who finds the address can change results.
+- `/admin` needs a login (step 5). The database itself only accepts changes to races, cars
+  and settings from a logged-in admin, so knowing the address isn't enough.
 - If `vehicles.image` is empty, a drawn kart is shown instead of a photo.

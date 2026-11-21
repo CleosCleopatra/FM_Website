@@ -3,7 +3,9 @@
 <!--
   =====================================================================
   PAGE: ADMIN PAGE (/admin). Decide races, mark breakdowns, set the current race, fastest lap and event details.
-       Not linked from the menu on purpose. Anyone with the address can open it.
+       Not linked from the menu on purpose. You have to log in to use it:
+       admin users are made in Supabase → Authentication → Users, and the
+       database only accepts changes from a logged-in admin (supabase/security.sql).
 
   Files for this page:
     HTML  admin/index.html
@@ -39,65 +41,85 @@
     <p class="intro">Record race winners, breakdowns and the fastest lap. Everything you save shows up on the site within a few seconds.</p>
     <p class="message" id="message" role="status" hidden></p>
 
-    <!-- 1. Matches where both cars are known but nobody has won yet -->
-    <section class="box">
-      <div class="box-bar"><h2>Races to decide</h2></div>
-      <div class="box-body" id="openMatches"></div>
-    </section>
-
-    <!-- 2. Which race is shown on the home page, and when it starts -->
-    <form class="box" id="currentRaceForm" novalidate>
-      <div class="box-bar"><h2>Current race</h2></div>
+    <!-- LOG IN: shown until an admin logs in. The rest of the page stays hidden until then. -->
+    <form class="box" id="loginForm" novalidate hidden>
+      <div class="box-bar"><h2>Log in</h2></div>
       <div class="box-body">
-        <label class="field" for="currentMatch">Race shown on the home page<select id="currentMatch"></select></label>
-        <label class="field" for="startsAt">Lights out at<input id="startsAt" type="datetime-local"></label>
-        <div><button class="button button--red" type="submit">Save current race</button></div>
+        <label class="field" for="loginEmail">Email<input id="loginEmail" type="email" autocomplete="username"></label>
+        <label class="field" for="loginPassword">Password<input id="loginPassword" type="password" autocomplete="current-password"></label>
+        <div><button class="button button--red" type="submit">Log in</button></div>
       </div>
     </form>
 
-    <!-- 3. Breakdowns (vehicles.broken) -->
-    <section class="box">
-      <div class="box-bar"><h2>Breakdowns</h2></div>
-      <div class="box-body">
-        <p class="small-print">Tap a car when it breaks down. Tap it again if it's running again.</p>
-        <div class="toggle-list" id="breakdowns"></div>
-      </div>
-    </section>
+    <!-- Everything below is only shown to a logged-in admin. -->
+    <div class="admin-area" id="adminArea" hidden>
 
-    <!-- 4. Fastest lap (settings.best_lap_vehicle_id, settings.best_lap_time) -->
-    <form class="box" id="fastestLapForm" novalidate>
-      <div class="box-bar"><h2>Fastest lap</h2></div>
-      <div class="box-body">
-        <div class="two-columns">
-          <label class="field" for="lapVehicle">Set by<select id="lapVehicle"></select></label>
-          <label class="field" for="lapTime">Lap time<input id="lapTime" placeholder="1:12.487"></label>
-        </div>
-        <div>
-          <button class="button button--red" type="submit">Save fastest lap</button>
-          <!-- Clears settings.best_lap_vehicle_id and best_lap_time (handled in js/admin.js) -->
-          <button class="button button--ghost" type="button" data-reset-lap>Reset fastest lap</button>
-        </div>
+      <div class="logged-in">
+        <span class="small-print" id="whoAmI"></span>
+        <button class="button button--ghost" type="button" data-logout>Log out</button>
       </div>
-    </form>
 
-    <!-- 5. Event details on the home page race card -->
-    <form class="box" id="eventForm" novalidate>
-      <div class="box-bar"><h2>Event details</h2></div>
-      <div class="box-body">
-        <label class="field" for="eventName">Event name<input id="eventName" maxlength="50" placeholder="event_name"></label>
-        <div class="two-columns">
-          <label class="field" for="eventPlace">Place<input id="eventPlace" maxlength="40" placeholder="event_place"></label>
-          <label class="field" for="eventLaps">Laps<input id="eventLaps" type="number" min="1" max="999" placeholder="laps"></label>
+      <!-- 1. Matches where both cars are known but nobody has won yet -->
+      <section class="box">
+        <div class="box-bar"><h2>Races to decide</h2></div>
+        <div class="box-body" id="openMatches"></div>
+      </section>
+
+      <!-- 2. Which race is shown on the home page, and when it starts -->
+      <form class="box" id="currentRaceForm" novalidate>
+        <div class="box-bar"><h2>Current race</h2></div>
+        <div class="box-body">
+          <label class="field" for="currentMatch">Race shown on the home page<select id="currentMatch"></select></label>
+          <label class="field" for="startsAt">Lights out at<input id="startsAt" type="datetime-local"></label>
+          <div><button class="button button--red" type="submit">Save current race</button></div>
         </div>
-        <div><button class="button button--red" type="submit">Save event details</button></div>
-      </div>
-    </form>
+      </form>
 
-    <!-- 6. Results already recorded, with undo -->
-    <section class="box">
-      <div class="box-bar"><h2>Results so far</h2></div>
-      <div class="box-body" id="results"></div>
-    </section>
+      <!-- 3. Breakdowns (vehicles.broken) -->
+      <section class="box">
+        <div class="box-bar"><h2>Breakdowns</h2></div>
+        <div class="box-body">
+          <p class="small-print">Tap a car when it breaks down. Tap it again if it's running again.</p>
+          <div class="toggle-list" id="breakdowns"></div>
+        </div>
+      </section>
+
+      <!-- 4. Fastest lap (settings.best_lap_vehicle_id, settings.best_lap_time) -->
+      <form class="box" id="fastestLapForm" novalidate>
+        <div class="box-bar"><h2>Fastest lap</h2></div>
+        <div class="box-body">
+          <div class="two-columns">
+            <label class="field" for="lapVehicle">Set by<select id="lapVehicle"></select></label>
+            <label class="field" for="lapTime">Lap time<input id="lapTime" placeholder="1:12.487"></label>
+          </div>
+          <div>
+            <button class="button button--red" type="submit">Save fastest lap</button>
+            <!-- Clears settings.best_lap_vehicle_id and best_lap_time (handled in js/admin.js) -->
+            <button class="button button--ghost" type="button" data-reset-lap>Reset fastest lap</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- 5. Event details on the home page race card -->
+      <form class="box" id="eventForm" novalidate>
+        <div class="box-bar"><h2>Event details</h2></div>
+        <div class="box-body">
+          <label class="field" for="eventName">Event name<input id="eventName" maxlength="50" placeholder="event_name"></label>
+          <div class="two-columns">
+            <label class="field" for="eventPlace">Place<input id="eventPlace" maxlength="40" placeholder="event_place"></label>
+            <label class="field" for="eventLaps">Laps<input id="eventLaps" type="number" min="1" max="999" placeholder="laps"></label>
+          </div>
+          <div><button class="button button--red" type="submit">Save event details</button></div>
+        </div>
+      </form>
+
+      <!-- 6. Results already recorded, with undo -->
+      <section class="box">
+        <div class="box-bar"><h2>Results so far</h2></div>
+        <div class="box-body" id="results"></div>
+      </section>
+
+    </div>
     <!-- ===== END PAGE CONTENT ===== -->
   </div>
 

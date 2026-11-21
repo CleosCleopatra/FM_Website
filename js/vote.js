@@ -13,6 +13,11 @@
 // Kept so categoryBox() can list every vehicle as a choice.
 let vehicleList = [];
 
+// Categories whose vote is being saved right now. All choices in such a
+// category stay disabled, so tapping two cars quickly can't cast two votes
+// (and the 10-second refresh can't switch the buttons back on halfway).
+const votingIn = new Set();
+
 
 /* ---------- loading ---------- */
 
@@ -73,10 +78,11 @@ function categoryBox(category, votes, vehicleById) {
 
   // Step 3: has this browser already voted in this category?
   const myVote = findIn(vehicleById, Remember.get("vote-" + category.id));
+  const saving = votingIn.has(String(category.id));
   const choices = myVote
     ? `<p class="your-vote">You voted for <b>${escapeHtml(myVote.name)}</b>.</p>`
     : `<div class="choices">${vehicleList.map((v) =>
-        `<button class="choice" data-category="${escapeHtml(category.id)}" data-vehicle="${escapeHtml(v.id)}">${escapeHtml(v.name)}</button>`
+        `<button class="choice" data-category="${escapeHtml(category.id)}" data-vehicle="${escapeHtml(v.id)}"${saving ? " disabled" : ""}>${escapeHtml(v.name)}</button>`
       ).join("")}</div>`;
 
   return `
@@ -89,6 +95,13 @@ function categoryBox(category, votes, vehicleById) {
 
 /* ---------- casting a vote ---------- */
 
+/** Switch every choice button in one category on or off. */
+function setChoicesDisabled(categoryId, disabled) {
+  document.querySelectorAll(".choice").forEach((b) => {
+    if (b.dataset.category === String(categoryId)) b.disabled = disabled;
+  });
+}
+
 // One click listener for the whole page (event delegation): the choice buttons
 // are re-created on every refresh, so listening on each button wouldn't last.
 document.addEventListener("click", async (event) => {
@@ -96,16 +109,30 @@ document.addEventListener("click", async (event) => {
   if (!button) return;
 
   const { category, vehicle } = button.dataset;
-  button.disabled = true; // stop double clicks while saving
+  // One vote per category: ignore taps while a vote here is saving or after voting.
+  if (votingIn.has(category) || Remember.get("vote-" + category)) return;
+
+  votingIn.add(category);
+  setChoicesDisabled(category, true); // lock the whole category, not just the tapped button
 
   try {
     await Data.addVote(category, vehicle);
     Remember.set("vote-" + category, vehicle); // remember so the choices hide
-    await loadVotes();                          // redraw with the new count
   } catch (error) {
     console.error(error);
-    button.disabled = false;
+    votingIn.delete(category);
+    setChoicesDisabled(category, false);
     showMessage("Your vote didn't go through. Try again.", true);
+    return;
+  }
+
+  // The vote is saved. Redraw with the new count; if only the redraw fails,
+  // the regular refresh will catch up, so don't tell them the vote failed.
+  votingIn.delete(category);
+  try {
+    await loadVotes();
+  } catch (error) {
+    console.error(error);
   }
 });
 
