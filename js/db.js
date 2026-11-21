@@ -7,8 +7,8 @@
 
    Tables used: vehicles, categories, matches, votes, bets, settings.
    Who may write what is decided in Supabase itself (see supabase/security.sql):
-   visitors can vote, offer bets and take open bets; everything on the admin
-   page needs a logged-in admin.
+   visitors can vote, offer bets and take open bets, and the admin page can
+   change races, cars and settings (it has no login).
    ===================================================================== */
 
 // One Supabase client for the whole page. `supabase` is the global created by
@@ -48,7 +48,7 @@ async function write(promise) {
  */
 async function writeChecked(query) {
   const rows = await write(query.select());
-  if (!rows.length) throw new Error("Nothing was saved. Are you still logged in? Try logging in again.");
+  if (!rows.length) throw new Error("Nothing was saved. The database refused the change (check the rules in supabase/security.sql).");
   return rows;
 }
 
@@ -105,24 +105,6 @@ const Data = {
     );
     if (!rows.length) throw new Error("Someone else already took this bet.");
   },
-
-
-  /* ----- admin login (Supabase Auth) ----- */
-
-  /** The logged-in admin's session, or null when nobody is logged in on this browser. */
-  async session() {
-    const { data, error } = await supabaseClient.auth.getSession();
-    if (error) throw error;
-    return data.session;
-  },
-
-  /** Log in with an admin user made in Supabase → Authentication → Users. */
-  async signIn(email, password) {
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-  },
-
-  signOut: () => supabaseClient.auth.signOut(),
 
 
   /* ----- admin page ----- */

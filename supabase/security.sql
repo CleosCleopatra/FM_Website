@@ -8,15 +8,10 @@
 --   * anyone can READ everything (the site shows it all)
 --   * anyone can VOTE, OFFER a bet, and TAKE an open bet (only filling in
 --     the taker's name and stake; nobody can edit or delete someone's bet)
---   * only a LOGGED-IN ADMIN can change races, cars, settings and
---     categories, and delete bets or votes (for cleaning up)
---
--- IMPORTANT, do these two things in the Supabase dashboard too:
---   1. Authentication → Sign In / Providers → turn OFF "Allow new users to
---      sign up". Otherwise anyone could make themselves an account and
---      count as an admin.
---   2. Authentication → Users → Add user → Create new user: make one user
---      per admin (email + password, tick "Auto Confirm User").
+--   * the admin page (no login) can change races, cars and settings.
+--     That means anyone who knows the /admin address can too.
+--   * nobody on the site can delete bets or votes; clean up in Supabase
+--     (Table Editor, or SQL Editor: delete from bets; delete from votes;)
 -- =====================================================================
 
 
@@ -86,12 +81,8 @@ revoke update on public.bets from anon, authenticated;
 grant update (taker_name, taker_stake) on public.bets to anon, authenticated;
 
 
--- 7. Logged-in admins can change the race data...
-create policy "admins can change" on public.vehicles   for all to authenticated using (true) with check (true);
-create policy "admins can change" on public.categories for all to authenticated using (true) with check (true);
-create policy "admins can change" on public.matches    for all to authenticated using (true) with check (true);
-create policy "admins can change" on public.settings   for all to authenticated using (true) with check (true);
-
--- ...and delete bets and votes, e.g. test bets or spam.
-create policy "admins can delete bets"  on public.bets  for delete to authenticated using (true);
-create policy "admins can delete votes" on public.votes for delete to authenticated using (true);
+-- 7. The admin page (no login) can update races, cars and settings.
+--    It only ever updates existing rows; adding or deleting them is done in Supabase.
+create policy "admin page can update" on public.vehicles for update to anon, authenticated using (true) with check (true);
+create policy "admin page can update" on public.matches  for update to anon, authenticated using (true) with check (true);
+create policy "admin page can update" on public.settings for update to anon, authenticated using (true) with check (true);

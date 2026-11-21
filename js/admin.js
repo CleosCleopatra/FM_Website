@@ -1,7 +1,7 @@
 /* =====================================================================
    admin.js: the admin page (admin/index.html, opened at /admin).
 
-   You log in first (Supabase Auth). Then the sections are shown, in order:
+   Sections on the page, in order:
      1. Races to decide   - matches with both cars and no winner: "X won" buttons
      2. Current race      - which match the home page shows, and its start time
      3. Breakdowns        - toggle vehicles.broken
@@ -14,62 +14,7 @@
 
 // Latest data from Supabase. formsFilled makes sure the forms (sections 4 and 5)
 // are filled only once, so a refresh never overwrites something being typed.
-const admin = { vehicles: [], matches: [], settings: {}, formsFilled: false, started: false };
-
-
-/* ---------- logging in ---------- */
-
-/**
- * Show the login form or the admin sections, depending on whether someone
- * is logged in on this browser. Supabase remembers the login, so an admin
- * only has to log in once per browser.
- */
-async function showLoginOrAdmin() {
-  let session = null;
-  try {
-    session = await Data.session();
-  } catch (error) {
-    console.error(error);
-  }
-
-  $("#loginForm").hidden = Boolean(session);
-  $("#adminArea").hidden = !session;
-  if (!session) return;
-
-  $("#whoAmI").textContent = `Logged in as ${session.user.email}`;
-  if (!admin.started) {
-    admin.started = true;
-    refreshEvery(loadAdmin); // start loading data only once someone is logged in
-  }
-}
-
-/** Submit handler for the login form. */
-async function logIn(event) {
-  event.preventDefault();
-  const email = $("#loginEmail").value.trim();
-  const password = $("#loginPassword").value;
-  if (!email || !password) return showMessage("Write your email and password.", true);
-
-  const button = $('#loginForm [type="submit"]');
-  button.disabled = true;
-  try {
-    await Data.signIn(email, password);
-    $("#loginPassword").value = "";
-    showMessage("");
-    await showLoginOrAdmin();
-  } catch (error) {
-    console.error(error);
-    showMessage("Wrong email or password.", true);
-  } finally {
-    button.disabled = false;
-  }
-}
-
-/** Log out, then reload so nothing from the admin session is left on screen. */
-async function logOut() {
-  await Data.signOut();
-  location.reload();
-}
+const admin = { vehicles: [], matches: [], settings: {}, formsFilled: false };
 
 
 /* ---------- loading ---------- */
@@ -301,9 +246,6 @@ document.addEventListener("click", (event) => {
   if (!button) return;
   const matchById = makeLookup(admin.matches);
 
-  // "Log out"
-  if (button.hasAttribute("data-logout")) logOut();
-
   // "X won": record the result and move X into the next match
   if (button.dataset.winner) {
     const match = findIn(matchById, button.dataset.match);
@@ -336,7 +278,6 @@ document.addEventListener("click", (event) => {
   }
 });
 
-$("#loginForm").addEventListener("submit", logIn);
 $("#currentRaceForm").addEventListener("submit", saveCurrentRace);
 $("#fastestLapForm").addEventListener("submit", saveFastestLap);
 $("#eventForm").addEventListener("submit", saveEvent);
@@ -344,4 +285,4 @@ $("#eventForm").addEventListener("submit", saveEvent);
 
 /* ---------- start ---------- */
 
-showLoginOrAdmin();
+refreshEvery(loadAdmin);

@@ -45,11 +45,3 @@
    ADD NEW STYLES FOR THIS PAGE BELOW.
    Give new elements a class in admin/index.html and style that class here.
    --------------------------------------------------------------------- */
-
-/* Login: the admin sections sit in #adminArea. "display: contents" makes the
-   wrapper invisible to the layout, so the boxes are spaced exactly as before.
-   :not([hidden]) keeps it hidden while nobody is logged in. */
-.admin-area:not([hidden]) { display: contents; }
-
-/* "Logged in as … / Log out" row above the admin sections */
-.logged-in { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
